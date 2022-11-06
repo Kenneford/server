@@ -14,14 +14,14 @@ const userSchema = new Schema(
     userName: {
       type: String,
       require: [true, "Please add a username!"],
-      // unique: true,
+      unique: true,
     },
     email: {
       type: String,
       require: [true, "Please enter your email!"],
-      // unique: true,
+      unique: true,
       lowercase: true,
-      // validator: [validator.isEmail, "Please provide a valid email!"],
+      //   validator: [validator.isEmail, "Please provide a valid email!"],
     },
     passwordHash: {
       type: String,
@@ -30,7 +30,7 @@ const userSchema = new Schema(
     },
     confirmPasswordHash: {
       type: String,
-      require: [true, "Please provide a password"],
+      //   require: [true, "Please provide a password"],
     },
     profileImage: String,
     joined: { type: Date, default: Date.now },

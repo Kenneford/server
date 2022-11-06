@@ -50,12 +50,6 @@ const getRegUsers = async () => {
   return Users.find({});
 };
 
-function generateAccessToken(userName) {
-  return jwt.sign({ userName }, process.env.TOKEN_SECRET, {
-    expiresIn: "1800s",
-  });
-}
-
 const validateUser = async ({ userName, password }) => {
   const user = await Users.findOne({ userName });
   console.log(user);
@@ -68,12 +62,61 @@ const validateUser = async ({ userName, password }) => {
   if (!isValid) {
     return null;
   }
-  return { token: generateAccessToken(userName), userName };
+  //   const refreshToken = jwt.sign(userName, process.env.REFRESH_TOKEN_SECRET);
+  return {
+    token: generateAccessToken(userName),
+    refreshToken: refreshTokens(userName),
+    userName,
+  };
 };
+
+function generateAccessToken(userName) {
+  const accessToken = jwt.sign({ userName }, process.env.TOKEN_SECRET, {
+    expiresIn: "1800s",
+  });
+  return accessToken;
+}
+function refreshTokens(userName) {
+  const token = jwt.sign({ userName }, process.env.REFRESH_TOKEN_SECRET, {
+    expiresIn: "1800s",
+  });
+  return token;
+}
+
+// function refreshTokens(req, res, next) {
+//   const newRefreshToken = req.body.token;
+//   if (newRefreshToken == null) return resendStatus(401);
+//   if (!refreshToken.includes(newRefreshToken)) return resendStatus(403);
+//   jwt.verify(newRefreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+//     if (err) return res.sendStatus(403);
+//     const accessToken = generateAccessToken({ userName: user.userName });
+//     res.json({ accessToken: accessToken });
+//   });
+// }
+
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers["authorization"];
+  // const token = authHeader && authHeader.split(" ")[1];
+  let token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) {
+    token = req.cookies.access_token?.token;
+  }
+  if (token == null) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
+    console.log(err);
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+}
 
 module.exports = {
   userSignUp,
   getRegUsers,
   validateUser,
   userCheck,
+  authenticateToken,
+  refreshTokens,
 };
