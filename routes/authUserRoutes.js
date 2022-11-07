@@ -15,7 +15,7 @@ const { generateAccessToken } = require("../controllers/usersController");
 const { response } = require("express");
 
 // Get all Users
-router.get("/users", authenticateToken, async (req, res) => {
+router.get("/users", async (req, res) => {
   res.send(await getRegUsers());
 });
 
