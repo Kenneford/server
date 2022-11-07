@@ -1,5 +1,5 @@
-const dotenv = require("dotenv");
-dotenv.config();
+// const dotenv = require("dotenv");
+// dotenv.config();
 
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
@@ -12,18 +12,19 @@ mongoose.connect(mongodbConnection);
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "MongoDB connection failed!"));
 
-const userCheck = async () => {
-  const { userName, email } = Users;
-  const usernameCheck = await Users.find({ userName });
-  const emailCheck = await Users.find({ email });
-  if (usernameCheck) {
-    throw new Error("Username already exist!");
-  } else if (emailCheck) {
-    throw new Error("Email already in use by an existing user!");
-  }
-};
+// const userCheck = async () => {
+//   const { userName, email } = Users;
+//   const usernameCheck = await Users.find({ userName });
+//   const emailCheck = await Users.find({ email });
+//   if (usernameCheck) {
+//     throw new Error("Username already exist!");
+//   } else if (emailCheck) {
+//     throw new Error("Email already in use by an existing user!");
+//   }
+// };
 
-const userSignUp = ({
+//Signing Up New User
+const userSignup = async ({
   firstName,
   lastName,
   userName,
@@ -31,9 +32,12 @@ const userSignUp = ({
   password,
   confirmPassword,
 }) => {
-  // if (userCheck()) {
   const passwordHash = bcrypt.hashSync(password, 10);
   const confirmPasswordHash = bcrypt.hashSync(confirmPassword, 10);
+  const refreshTokens = jwt.sign(
+    { userName },
+    process.env.REFRESH_TOKEN_SECRET
+  );
   const newUser = Users.create({
     firstName,
     lastName,
@@ -41,14 +45,26 @@ const userSignUp = ({
     email,
     passwordHash,
     confirmPasswordHash,
+    refreshToken: refreshTokens,
   });
   return newUser;
-  // }
 };
 
 const getRegUsers = async () => {
   return Users.find({});
 };
+
+function generateAccessToken(userName) {
+  const accessToken = jwt.sign({ userName }, process.env.TOKEN_SECRET, {
+    expiresIn: process.env.TOKEN_SECRET_EXPIRY,
+  });
+  return accessToken;
+}
+
+// function refreshTokens(userName) {
+//   const token = jwt.sign({ userName }, process.env.REFRESH_TOKEN_SECRET);
+//   return token;
+// }
 
 const validateUser = async ({ userName, password }) => {
   const user = await Users.findOne({ userName });
@@ -61,62 +77,22 @@ const validateUser = async ({ userName, password }) => {
   }
   if (!isValid) {
     return null;
+  } else {
+    return {
+      token: generateAccessToken(userName),
+      refreshToken: user.refreshToken,
+      userName,
+    };
   }
-  //   const refreshToken = jwt.sign(userName, process.env.REFRESH_TOKEN_SECRET);
-  return {
-    token: generateAccessToken(userName),
-    refreshToken: refreshTokens(userName),
-    userName,
-  };
 };
 
-function generateAccessToken(userName) {
-  const accessToken = jwt.sign({ userName }, process.env.TOKEN_SECRET, {
-    expiresIn: "1800s",
-  });
-  return accessToken;
-}
-function refreshTokens(userName) {
-  const token = jwt.sign({ userName }, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: "1800s",
-  });
-  return token;
-}
-
-// function refreshTokens(req, res, next) {
-//   const newRefreshToken = req.body.token;
-//   if (newRefreshToken == null) return resendStatus(401);
-//   if (!refreshToken.includes(newRefreshToken)) return resendStatus(403);
-//   jwt.verify(newRefreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-//     if (err) return res.sendStatus(403);
-//     const accessToken = generateAccessToken({ userName: user.userName });
-//     res.json({ accessToken: accessToken });
-//   });
-// }
-
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers["authorization"];
-  // const token = authHeader && authHeader.split(" ")[1];
-  let token = authHeader && authHeader.split(" ")[1];
-
-  if (!token) {
-    token = req.cookies.access_token?.token;
-  }
-  if (token == null) return res.sendStatus(401);
-
-  jwt.verify(token, process.env.TOKEN_SECRET, (err, user) => {
-    console.log(err);
-    if (err) return res.sendStatus(403);
-    req.user = user;
-    next();
-  });
-}
+const logout = (req, res) => {};
 
 module.exports = {
-  userSignUp,
+  userSignup,
   getRegUsers,
   validateUser,
-  userCheck,
-  authenticateToken,
-  refreshTokens,
+  //   userCheck,
+  //   refreshTokens,
+  generateAccessToken,
 };

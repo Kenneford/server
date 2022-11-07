@@ -1,4 +1,6 @@
-GET http://localhost:8083/api/users
+DELETE http://localhost:8083/api/logout
+Content-Type: application/json
 
-
-
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6Im1hcmsiLCJpYXQiOjE2Njc3ODAyODV9.CR5TRviHHjSpeZrcrbYAsuG4pvjzBhA264euqbcVN4U"
+}
