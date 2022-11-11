@@ -24,4 +24,4 @@ app.use("/api", authUserRoutes);
 app.post("/api", authUserRoutes);
 app.post("/api", authUserRoutes);
 
-app.listen(PORT, () => console.log(`Server listening at port ${port}`));
+app.listen(PORT, () => console.log(`Server listening at port ${PORT}`));
