@@ -18,10 +18,10 @@ app.use(cors());
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 
-const port = process.env.PORT || 8083;
+const PORT = process.env.PORT || 8083;
 
 app.use("/api", authUserRoutes);
 app.post("/api", authUserRoutes);
 app.post("/api", authUserRoutes);
 
-app.listen(port, () => console.log(`Server listening at port ${port}`));
+app.listen(PORT, () => console.log(`Server listening at port ${port}`));
