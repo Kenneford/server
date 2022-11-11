@@ -12,10 +12,9 @@ const {
 } = require("../controllers/usersController");
 const { authenticateToken } = require("../authUserCheck/authUserCheck");
 const { generateAccessToken } = require("../controllers/usersController");
-const { response } = require("express");
 
 // Get all Users
-router.get("/users", authenticateToken, async (req, res) => {
+router.get("/users", async (req, res) => {
   res.send(await getRegUsers());
 });
 
@@ -50,12 +49,6 @@ router.post(
     if (userNameExist) {
       return res.status(400).json({ msg: "Username already exists!" });
     }
-    // const user = await userSignup((user) => {
-    //   return user.email === email;
-    // });
-    // if (user) {
-    //   return res.status(400).json({ msg: "User already exist!" });
-    // }
     res.send(await userSignup(req.body));
   }
 );
@@ -64,8 +57,17 @@ router.post(
 router.post("/login", async (req, res) => {
   const result = await validateUser(req.body);
   console.log(result);
+  // const password = await Users.findOne({ password: req.body.password });
+  // const userNameExist = await Users.findOne({ userName: req.body.userName });
+  // if (result !== password.passwordHash) {
+  //   return res.status(400).json({ msg: "Wrong password!" });
+  // }
+  // if (result !== userNameExist.userName) {
+  //   return res.status(400).json({ msg: "Wrong username!" });
+  // }
+  // res.send(await userSignup(req.body));
   if (!result) {
-    res.json({ msg: "Authentication failed!" });
+    res.json({ msg: "Authentication failed! Invalid username or password!" });
   } else {
     res.send(result);
   }

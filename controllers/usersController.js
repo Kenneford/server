@@ -36,8 +36,15 @@ const userSignup = async ({
   const confirmPasswordHash = bcrypt.hashSync(confirmPassword, 10);
   const refreshTokens = jwt.sign(
     { userName },
-    process.env.REFRESH_TOKEN_SECRET
+    process.env.REFRESH_TOKEN_SECRET,
+    {
+      expiresIn: process.env.REFRESH_TOKEN_SECRET_EXPIRY,
+    }
   );
+  if (!firstName || !lastName) {
+    // const error = "First name or last name should not be empty!";
+    return;
+  }
   const newUser = Users.create({
     firstName,
     lastName,
@@ -51,7 +58,8 @@ const userSignup = async ({
 };
 
 const getRegUsers = async () => {
-  return Users.find({});
+  const user = await Users.find({});
+  return user;
 };
 
 function generateAccessToken(userName) {

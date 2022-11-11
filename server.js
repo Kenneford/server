@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const crypto = require("crypto");
 crypto.randomBytes(64);
 const jwt = require("jsonwebtoken");
+
 const authUserRoutes = require("./routes/authUserRoutes");
 
 const app = express();
