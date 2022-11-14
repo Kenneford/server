@@ -1,16 +1,15 @@
 // const dotenv = require("dotenv");
 // dotenv.config();
 
-const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Users = require("../model/userSchema");
 
-const mongodbConnection = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_URL}/test`;
-// const mongodbConnection = `mongodb+srv://kenneford88:CodeWithKenn88.@cluster0.h935rfd.mongodb.net/test`;
-mongoose.connect(mongodbConnection);
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "MongoDB connection failed!"));
+// const mongodbConnection = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_URL}/test`;
+// // const mongodbConnection = `mongodb+srv://kenneford88:CodeWithKenn88.@cluster0.h935rfd.mongodb.net/test`;
+// mongoose.connect(mongodbConnection);
+// const db = mongoose.connection;
+// db.on("error", console.error.bind(console, "MongoDB connection failed!"));
 
 // const userCheck = async () => {
 //   const { userName, email } = Users;
@@ -75,7 +74,7 @@ function generateAccessToken(userName) {
 // }
 
 const validateUser = async ({ userName, password }) => {
-  const user = await Users.findOne({ userName });
+  const user = await Users.findOne({ userName, password });
   console.log(user);
   let isValid = false;
   try {

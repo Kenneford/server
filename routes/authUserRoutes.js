@@ -55,17 +55,11 @@ router.post(
 
 // Signing In a User
 router.post("/login", async (req, res) => {
+  // const { userName, password } = req.body;
+  // const userNameExist = await Users.findOne({ userName });
+  // const passwordExist = await Users.findOne({ password });
   const result = await validateUser(req.body);
   console.log(result);
-  // const password = await Users.findOne({ password: req.body.password });
-  // const userNameExist = await Users.findOne({ userName: req.body.userName });
-  // if (result !== password.passwordHash) {
-  //   return res.status(400).json({ msg: "Wrong password!" });
-  // }
-  // if (result !== userNameExist.userName) {
-  //   return res.status(400).json({ msg: "Wrong username!" });
-  // }
-  // res.send(await userSignup(req.body));
   if (!result) {
     res.json({ msg: "Authentication failed! Invalid username or password!" });
   } else {
