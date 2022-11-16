@@ -55,7 +55,7 @@ router.post(
 
 // Signing In a User
 router.post("/login", async (req, res) => {
-  // const { userName, password } = req.body;
+  const { userName, password } = req.body;
   // const userNameExist = await Users.findOne({ userName });
   // const passwordExist = await Users.findOne({ password });
   const result = await validateUser(req.body);
@@ -67,19 +67,23 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/api/token", async (req, res) => {
-  const refreshToken = req.body.token;
-  const refreshTokens = await Users.findOne({
-    refreshToken: req.body.refreshToken,
-  });
-  if (refreshToken == null) return res.sendStatus(401);
-  if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403);
-  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
-    const access_token = generateAccessToken({ userName: user.userName });
-    res.json({ access_token: access_token });
-  });
+router.get("/", authenticateToken, (req, res) => {
+  res.render("/");
 });
+
+// router.post("/api/token", async (req, res) => {
+//   const refreshToken = req.body.token;
+//   const refreshTokens = await Users.findOne({
+//     refreshToken: req.body.refreshToken,
+//   });
+//   if (refreshToken == null) return res.sendStatus(401);
+//   if (!refreshTokens.includes(refreshToken)) return res.sendStatus(403);
+//   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
+//     if (err) return res.sendStatus(403);
+//     const access_token = generateAccessToken({ userName: user.userName });
+//     res.json({ access_token: access_token });
+//   });
+// });
 
 router.delete("/api/logout", async (req, res) => {
   const refreshTokens = await Users.findOne({

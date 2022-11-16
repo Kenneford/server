@@ -7,8 +7,6 @@ const cookieParser = require("cookie-parser");
 const crypto = require("crypto");
 crypto.randomBytes(64);
 const jwt = require("jsonwebtoken");
-const http = require("http");
-const WebSocket = require("ws");
 
 const mongodbConnection = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_URL}/test`;
 // const mongodbConnection = `mongodb+srv://kenneford88:CodeWithKenn88.@cluster0.h935rfd.mongodb.net/test`;
@@ -23,6 +21,28 @@ mongoose.connection.once("open", () => {
 });
 
 const app = express();
+const http = require("http");
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const serverSocket = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
+
+serverSocket.on("connection", (socket) => {
+  console.log("New user connected!");
+
+  socket.on("message", (chat) => {
+    serverSocket.emit("message", chat);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected!");
+  });
+});
+
+const PORT = process.env.PORT || 8083;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -31,18 +51,6 @@ app.use(cors());
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 
-const PORT = process.env.PORT || 8083;
-
-const server = http.createServer(app);
-// const WebSocket = require("ws").Server;
-const wsServer = new WebSocket.Server({ server });
-
-// wsServer.on("connection", (socket) => {
-//   // this code will run each time a new client connects to the server
-//   console.log("New client connected!");
-//   wsServer.send("Welcome new client!");
-// });
-
 const authUserRoutes = require("./routes/authUserRoutes");
 const messagesRoutes = require("./routes/messagesRoutes");
 
@@ -50,6 +58,7 @@ const Users = require("./model/userSchema");
 const Message = require("./model/messageModel");
 const ChatRoom = require("./model/ChatRoom");
 
+app.use("/", authUserRoutes);
 app.use("/api", authUserRoutes);
 app.post("/api", authUserRoutes);
 app.post("/api", authUserRoutes);
