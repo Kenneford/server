@@ -74,7 +74,7 @@ function generateAccessToken(userName) {
 // }
 
 const validateUser = async ({ userName, password }) => {
-  const user = await Users.findOne({ userName, password });
+  const user = await Users.findOne({ userName });
   console.log(user);
   let isValid = false;
   try {
