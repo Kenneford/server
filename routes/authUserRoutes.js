@@ -1,6 +1,7 @@
 const express = require("express");
 
 const router = express.Router();
+
 const { check, validationResult } = require("express-validator");
 const Users = require("../model/userSchema");
 const {
@@ -12,6 +13,12 @@ const {
 } = require("../controllers/usersController");
 const { authenticateToken } = require("../authUserCheck/authUserCheck");
 const { generateAccessToken } = require("../controllers/usersController");
+const {
+  signup,
+  login,
+  logout,
+  verifyuser,
+} = require("../controllers/authUserControl");
 
 // Get all Users
 router.get("/users", async (req, res) => {
@@ -86,11 +93,8 @@ router.get("/", authenticateToken, (req, res) => {
 // });
 
 router.delete("/api/logout", async (req, res) => {
-  const refreshTokens = await Users.findOne({
-    refreshToken: req.body.refreshToken,
-  });
-  refreshTokens.filter((token) => token !== req.body.token);
-  response.sendStatus(204);
+  res.cookie("jwt", "", { maxAge: 1 });
+  res.status(200).json({ logout: true });
 });
 
 module.exports = router;

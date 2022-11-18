@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const chatRoomSchema = new Schema({
-  firstName: {
+  name: {
     type: String,
     require: [true, "Please add your first name!"],
   },

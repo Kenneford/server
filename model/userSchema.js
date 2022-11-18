@@ -41,4 +41,25 @@ const userSchema = new Schema(
   // }
 );
 
-module.exports = mongoose.model("Users", userSchema);
+// userSchema.pre("save", async function (next) {
+//   const salt = await bcrypt.genSalt();
+//   password = await bcrypt.hash(password, salt);
+//   next();
+// });
+
+// //CREATING OF  A MANUAL LOGIN METHOD
+// userSchema.statics.login = async function (userName, password) {
+//   const user = await this.findOne({ userName });
+//   if (user) {
+//     const isAuthenticated = await bcrypt.compare(password, user.password);
+//     if (isAuthenticated) {
+//       return user;
+//     } else {
+//       throw Error("Incorrect password!");
+//     }
+//   } else {
+//     throw Error("Incorrect userName!");
+//   }
+// };
+
+module.exports = mongoose.model("User", userSchema);

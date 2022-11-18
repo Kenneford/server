@@ -30,6 +30,7 @@ const userSignup = async ({
   email,
   password,
   confirmPassword,
+  profileImage,
 }) => {
   const passwordHash = bcrypt.hashSync(password, 10);
   const confirmPasswordHash = bcrypt.hashSync(confirmPassword, 10);
@@ -52,6 +53,7 @@ const userSignup = async ({
     passwordHash,
     confirmPasswordHash,
     refreshToken: refreshTokens,
+    profileImage,
   });
   return newUser;
 };

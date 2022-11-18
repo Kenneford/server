@@ -4,20 +4,21 @@ const Schema = mongoose.Schema;
 
 const messageSchema = new Schema(
   {
-    chatRoom: {
-      type: mongoose.Schema.Types.ObjectId,
-      required: "Chatroom is required!",
-      ref: "Chatroom",
-    },
-    message: {
+    name: {
       type: String,
       required: true,
     },
-
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Users",
-      require: true,
+    user_id: {
+      type: String,
+      required: true,
+    },
+    text: {
+      type: String,
+      required: true,
+    },
+    room_id: {
+      type: String,
+      required: true,
     },
   },
   {
